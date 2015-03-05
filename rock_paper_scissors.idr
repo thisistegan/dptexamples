@@ -24,15 +24,18 @@ data Hand = Rock | Paper | Scissors
 data Result = Win | Lose| Tie
 
 
---Helper function used to convert a string into a hand. Currently the only valid inputs for non-Paper hands are r and s. All others default to Paper--
+{-Helper function used to convert a string into a hand. Currently the only valid inputs for 
+non-Paper hands are r and s. All others default to Paper-}
 toHand: String -> Hand
 toHand "r"= Rock
 toHand "s" = Scissors
 toHand _ = Paper
 
---Here we define a function from the game state to a type, giving a concrete representation of the game state. This is the resource of the effect we will be making. --
+{-Here we define a function from the game state to a type, giving a concrete representation of
+ the game state. This is the resource of the effect we will be making. -}
 
---There are three possible types. Before the game starts, after the game is over, and during the game (MkG). MkG captures the sta eof a game currently running.--  
+{-There are three possible types. Before the game starts, after the game is over, and during 
+the game (MkG). MkG captures the sta eof a game currently running.-}  
 
 --guesses correponds to a vector of the computers guesses--
 
@@ -69,7 +72,9 @@ instance Show (RPS s) where
     show (MkG g w l t r) = "We're still playin! Your score is " ++ (cast (toIntegerNat w)) ++ " and mine is " ++ (cast (toIntegerNat l))
 
 
---The inital state. A function of a vector of hands, the computer's guesses. Currently I have set the number of rounds to be five and the vector of the computer's guesses to be the same length.--
+{-The inital state. A function of a vector of hands, the computer's guesses. Currently I have 
+set the number of rounds to be five and the vector of the computer's guesses to be the same 
+length.-}
 
 initState: (x: Vect 5 Hand) -> RPS (Running Z Z Z 5)
 initState hand = MkG hand Z Z Z 5 
