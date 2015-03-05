@@ -157,6 +157,8 @@ instance Handler Rules m where
 implicitely bound. !expr will evaluate expression, bind it to a fresh name x, and then replace 
 !expr with x. A method to escape verbose do notation. -}
 
+{- Basically, (!) : { xs } Eff a -> a -}
+
   
 game : { [RPSGAME (Running w l t (S r)), STDIO] ==> 
          [RPSGAME NotRunning, STDIO] } Eff ()
@@ -187,6 +189,6 @@ runGame = do { newgame [Rock,Paper,Scissors, Scissors, Paper]
              game
              putStrLn (show !get)}
 
---We use run to run an effected profram in Eff--
+--Programs in Eff are run in some underlying computation conxtext, using the run function--
 main : IO ()
 main = run runGame
