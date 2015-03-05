@@ -79,11 +79,15 @@ length.-}
 initState: (x: Vect 5 Hand) -> RPS (Running Z Z Z 5)
 initState hand = MkG hand Z Z Z 5 
 
---My effects signature. Note how the resources of the effect RPS can change. This is especially interesting in the Play case as the change in the resource depends on res, the result of playing a hand. Note that this signature does not explain how the rules are implemented. --
+{-My effects signature. Note how the resources of the effect RPS can change. This is 
+especially interesting in the Play case as the change in the resource depends on res, the 
+result of playing a hand. Note that this signature does not explain how the rules are 
+implemented. -}
 
 
 data Rules: Effect where
-    --We continue to play as long as the number of rounds has not reached zero, updating the win, lose or tie count and the number of rounds remaining as appropriate --
+    {-We continue to play as long as the number of rounds has not reached zero, updating the 
+    win, lose or tie count and the number of rounds remaining as appropriate -}
 
     Play: (x:Hand)->{ RPS (Running w l t (S r)) ==> {res} (case res of 
                                             Win => RPS (Running (S w) l t r)
@@ -99,12 +103,15 @@ data Rules: Effect where
     --Get just returns the current effect--
     Get: { g } Rules g
 
-{-MkEff constructs an EFFECT by taking the resource type and the effect signature. Converts our GState to something usable in an effects list. -}
+{-MkEff constructs an EFFECT by taking the resource type and the effect signature. Converts 
+our GState to something usable in an effects list. -}
 
 RPSGAME: GState -> EFFECT
 RPSGAME g = MkEff (RPS g) Rules
 
---The call function converts an effect (such as Play hand) into a function in Eff. The proof that the effect is available is essesntialy an index into the list of effects and so can be automatically constructed.--
+{-The call function converts an effect (such as Play hand) into a function in Eff. The proof 
+that the effect is available is essesntialy an index into the list of effects and so can be 
+automatically constructed.-}
 
 play: Hand -> { [RPSGAME (Running w l t (S k))] ==> {res} [RPSGAME (case res of 
                                             Win => (Running (S w) l t k)
@@ -123,11 +130,15 @@ newgame h = call(NewGame h)
 get: { [RPSGAME g] } Eff (RPS g)
 get = call Get
 
---We need to explain how each effect is executed in a particular computation context m in order to run the effectful program. This is achieved by creating an instance of the class Handler. --
+{-We need to explain how each effect is executed in a particular computation context m in 
+order to run the effectful program. This is achieved by creating an instance of the class 
+Handler. -}
 
 --Handler e m means that the effect with signature e is declared in the context m.--
 
---The handle function takes a resource of input (in this case the current resource associated with RPSGAME), the effectful operation, a continuation (k) which is passed the result of the operation and updated resource. --
+{-The handle function takes a resource of input (in this case the current resource associated 
+with RPSGAME), the effectful operation, a continuation (k) which is passed the result of the 
+operation and updated resource. -}
 
 
 instance Handler Rules m where
@@ -142,7 +153,9 @@ instance Handler Rules m where
 
 --Now, we can actually play the game :)--
 
---Note the (!)-notation. !expr means that the expression should be evaluated and then implicitely bound. !expr will evaluate expression, bind it to a fresh name x, and then replace !expr with x. A method to escape verbose do notation. --
+{-Note the (!)-notation. !expr means that the expression should be evaluated and then 
+implicitely bound. !expr will evaluate expression, bind it to a fresh name x, and then replace 
+!expr with x. A method to escape verbose do notation. -}
 
   
 game : { [RPSGAME (Running w l t (S r)), STDIO] ==> 
