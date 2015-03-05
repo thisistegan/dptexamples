@@ -11,9 +11,6 @@ import Effect.Random
 import Effect.Select
 
 
-cycle: Vect (S n) a -> Vect (S n) a
-cycle v = insertAt 0 (last v) (tail v)
-
 data GState = Running Nat Nat Nat| NotRunning
 data Hand = Rock | Paper | Scissors 
 data Game: GState->Type
@@ -89,10 +86,10 @@ get = call Get
 instance Handler Rules m where
     handle st Get k = k st st
     handle st (NewGame hand) k = k () (initState hand)
-    handle (MkG g s sg (S r)) (Play x) k = case (winlose x (last g)) of
-        Win => k Win (MkG (cycle g) (S s) sg r);
-        Lose => k Lose (MkG (cycle g) s (S sg) r)
-        Tie => k Tie (MkG (cycle g) s sg r)
+    handle (MkG g s sg (S r)) (Play x) k = case (winlose x (head g)) of
+        Win => k Win (MkG ((last g)::(init g)) (S s) sg r);
+        Lose => k Lose (MkG ((last g)::(init g)) s (S sg) r)
+        Tie => k Tie (MkG ((last g)::(init g)) s sg r)
     handle (MkG g s sg Z) Over k = k () (GameOver s sg)
    
   
