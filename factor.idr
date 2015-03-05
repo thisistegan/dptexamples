@@ -12,6 +12,8 @@ a value from a list of possibilities in such a way as the entire computation suc
 
 {- f : (x1 : a1) -> (x2 : a2) -> ... -> { effs } Eff t-}
 
+{-Eff : (x : Type) -> List EFFECT -> (x -> List EFFECT) -> Type-}
+
 factors : Int -> { [SELECT, EXCEPTION String] } Eff (Int, Int, Int)
 factors n = do x <- select [1..(n-1)];
 				y <- select [1..x];
