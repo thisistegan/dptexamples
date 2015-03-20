@@ -5,9 +5,9 @@ import Effect.Select
 import Effect.Exception
 
 {- Simple program used to find the factors of a given number. 
-Used to demonstrate the SELECT effect used to solve constraint problems. -}
+Demonstration of the SELECT effect used to solve constraint problems. 
 
-{-The Select effect a non-determinism effect which allows the program to choose
+The Select effect is a non-determinism effect which allows the program to choose
 a value from a list of possibilities in such a way as the entire computation succeeds. -}
 
 {- f : (x1 : a1) -> (x2 : a2) -> ... -> { effs } Eff t-}
@@ -23,4 +23,7 @@ factors n = do x <- select [1..(n-1)];
 
 
 main : IO ()
-main = print $ the (List _) $ run (factors 234)
+{- In the Maybe, factors will return the first triple found while in the List context, 
+it will return all triples found. -}
+main = do { print $ the (Maybe _) $ run (factors 234);
+			 print $ the (List _) $ run (factors 234)}
