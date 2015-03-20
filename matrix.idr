@@ -1,4 +1,8 @@
-module matrixcomplete
+{-Examples of Idris functions for basic operations on Vector and Matrix types. 
+Illustrates a very simple use of dependent types, i.e. for checking that matrix dimensions 
+are appropriate for the given operations. -}
+
+module matrix
 
 --vect Data Type--
 data Vect: Nat -> Type -> Type where
@@ -21,23 +25,23 @@ map f Nil        = Nil
 map f (x::xs) = f x :: map f xs
 
 --Adds two vects of the same length--
-VecAdd : Num a => {n:Nat}-> Vect n a -> Vect n a -> Vect n a
-VecAdd Nil Nil = Nil
-VecAdd (x :: xs) (y :: ys) = (x + y) :: (VecAdd xs ys)
+VectAdd : Num a => {n:Nat}-> Vect n a -> Vect n a -> Vect n a
+VectAdd Nil Nil = Nil
+VectAdd (x :: xs) (y :: ys) = (x + y) :: (VectAdd xs ys)
 
 --Subtracts two vects of the same length--
-VecSub : Num a => {n:Nat}->Vect n a -> Vect n a -> Vect n a
-VecSub Nil Nil = Nil
-VecSub (x :: xs) (y :: ys) = x - y :: VecSub xs ys
+VectSub : Num a => {n:Nat}->Vect n a -> Vect n a -> Vect n a
+VectSub Nil Nil = Nil
+VectSub (x :: xs) (y :: ys) = x - y :: VectSub xs ys
 
 --Returns the first element of a vect. Vect must have at least one element--
-VecHead : {n:Nat}->Vect (S n) a -> a
-VecHead (x::xs) = x
+VectHead : {n:Nat}->Vect (S n) a -> a
+VectHead (x::xs) = x
 
 --Returns the last element of a vect. Vect must have at least one element--
-VecTail : {n:Nat}->Vect (S n) a -> a
-VecTail (x::Nil) = x
-VecTail (x::y::xs) = VecTail (y::xs)
+VectTail : {n:Nat}->Vect (S n) a -> a
+VectTail (x::Nil) = x
+VectTail (x::y::xs) = VectTail (y::xs)
 
 --Performs scalar multiplication (dot product) on two vectors of the same length--
 ScalMult : Num a => Vect n a -> Vect n a -> a
@@ -60,12 +64,12 @@ Matrix n m a = Vect n (Vect m a)
 --Adds two matrixes of the same dimensions together--
 MatAdd : Num a => Matrix n m a -> Matrix n m a -> Matrix n m a
 MatAdd Nil Nil = Nil
-MatAdd (m1::m) (m2::n) = (VecAdd m1 m2)::(MatAdd m n)
+MatAdd (m1::m) (m2::n) = (VectAdd m1 m2)::(MatAdd m n)
 
 --Subtracts two matrixes of the same dimensions--
 MatSub: Num a => Matrix n m a -> Matrix n m a -> Matrix n m a
 MatSub Nil Nil = Nil
-MatSub (m1::m) (m2::n) = (VecSub m1 m2)::(MatSub m n)
+MatSub (m1::m) (m2::n) = (VectSub m1 m2)::(MatSub m n)
 
 --Makes n copies of type--
 repeat : (n : Nat) -> a -> Vect n a
