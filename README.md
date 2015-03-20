@@ -1,3 +1,5 @@
 # dptexamples
 
-Examples in Idris showcasing how dependent types can be used. Focused in particular on the effects library. 
+Examples in Idris showcasing the use of dependent types. 
+
+Focuses in particular on the Effects library. 
