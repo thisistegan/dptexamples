@@ -2,7 +2,8 @@ import Effects
 import Effect.State
 import Effect.StdIO
 
---To be used as an example for discussion only. Note that it will not type check --
+--To be used as an example for discussion only. Note that this will not type check. 
+From http://eb.host.cs.st-andrews.ac.uk/drafts/eff-tutorial.pdf --
 
 
 readIntBroke : { [STATE (Vect n Int), STDIO] } Eff ()
@@ -21,3 +22,4 @@ readInt = do {let x = trim !getStr;
 				False => pure False
 				True => do {putM (cast x :: !get);
 						pure True})
+
