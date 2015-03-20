@@ -10,32 +10,32 @@ import Data.Vect
 import Effect.Random
 import Effect.Select
 
---We can make our own EFFECTS!!!--
+--We can make our own EFFECTS!--
 
---Here is a simple program to play Rock Paper Scissors for a series of rounds, keeping track of the score.--
+{- Here is a simple program to play Rock Paper Scissors for a series of rounds, using a mutable state to keep track 
+of the score and the number of rounds remaining. -}
 
---Define the same state. Can either be running (with scores win, lose, tie) or not running. 
-data GState = Running Nat Nat Nat Nat| NotRunning
+--Define the game state. Can either be running (with win, lose, and tie scores) or not running. 
+data GState = Running Nat Nat Nat Nat | NotRunning
 
 --Possible hands to play--
 data Hand = Rock | Paper | Scissors 
 
 --The result of possible plays--
-data Result = Win | Lose| Tie
+data Result = Win | Lose | Tie
 
-
-{-Helper function used to convert a string into a hand. Currently the only valid inputs for 
-non-Paper hands are r and s. All others default to Paper-}
+{- Helper function used to convert a string into a hand. Currently the only valid inputs for 
+non-Paper hands are r and s. All others default to Paper. -}
 toHand: String -> Hand
-toHand "r"= Rock
+toHand "r" = Rock
 toHand "s" = Scissors
 toHand _ = Paper
 
-{-Here we define a function from the game state to a type, giving a concrete representation of
- the game state. This is the resource of the effect we will be making. -}
+{- Here we define a function from the game state to a type, giving a concrete representation of
+ the game state. This is the resource of the effect we will be making. 
 
-{-There are three possible types. Before the game starts, after the game is over, and during 
-the game (MkG). MkG captures the sta eof a game currently running.-}  
+There are three possible types. Before the game starts, after the game is over, and during 
+the game (MkG). MkG captures the state of a game currently running. -}  
 
 --guesses correponds to a vector of the computers guesses--
 
@@ -64,29 +64,29 @@ winlose Paper Rock = Win
 winlose Scissors Paper = Win
 winlose Rock Scissors = Win
 
---An instance of show. Defines what to output in each of the game states--
+--An instance of Show. Defines what to output in each of the game states--
 
 instance Show (RPS s) where
     show Init = "Not ready yet"
     show (GameOver w l t) = "Game over! Your score was " ++ (cast (toIntegerNat w)) ++ " and mine was " ++ (cast (toIntegerNat l))
-    show (MkG g w l t r) = "We're still playin! Your score is " ++ (cast (toIntegerNat w)) ++ " and mine is " ++ (cast (toIntegerNat l))
+    show (MkG g w l t r) = "We're playing! Your score is " ++ (cast (toIntegerNat w)) ++ " and mine is " ++ (cast (toIntegerNat l))
 
 
-{-The inital state. A function of a vector of hands, the computer's guesses. Currently I have 
+{- The inital state. A function of a vector of hands, the computer's guesses. Currently I have 
 set the number of rounds to be five and the vector of the computer's guesses to be the same 
-length.-}
+length. -}
 
 initState: (x: Vect 5 Hand) -> RPS (Running Z Z Z 5)
 initState hand = MkG hand Z Z Z 5 
 
-{-My effects signature. Note how the resources of the effect RPS can change. This is 
+{- My effects signature. Note how the resources can change. This is 
 especially interesting in the Play case as the change in the resource depends on res, the 
 result of playing a hand. Note that this signature does not explain how the rules are 
 implemented. -}
 
 
 data Rules: Effect where
-    {-We continue to play as long as the number of rounds has not reached zero, updating the 
+    {- We continue to play as long as the number of rounds has not reached zero, updating the 
     win, lose or tie count and the number of rounds remaining as appropriate -}
 
     Play: (x:Hand)->{ RPS (Running w l t (S r)) ==> {res} (case res of 
@@ -100,7 +100,7 @@ data Rules: Effect where
     --A new game takes a new vector of guesses--
     NewGame: (h: Vect 5 Hand) -> {g==>RPS (Running Z Z Z 5)} Rules ()
 
-    --Get just returns the current effect--
+    --Get returns the current effect--
     Get: { g } Rules g
 
 {-MkEff constructs an EFFECT by taking the resource type and the effect signature. Converts 
@@ -130,13 +130,13 @@ newgame h = call(NewGame h)
 get: { [RPSGAME g] } Eff (RPS g)
 get = call Get
 
-{-We need to explain how each effect is executed in a particular computation context m in 
+{- We need to explain how each effect is executed in a particular computation context m in 
 order to run the effectful program. This is achieved by creating an instance of the class 
 Handler. -}
 
---Handler e m means that the effect with signature e is declared in the context m.--
+--Handler e m means that the effect with signature e is declared in the context m. --
 
-{-The handle function takes a resource of input (in this case the current resource associated 
+{- The handle function takes a resource (in this case the current resource associated 
 with RPSGAME), the effectful operation, a continuation (k) which is passed the result of the 
 operation and updated resource. -}
 
@@ -153,7 +153,7 @@ instance Handler Rules m where
 
 --Now, we can actually play the game :)--
 
-{-Note the (!)-notation. !expr means that the expression should be evaluated and then 
+{- Note the (!)-notation. !expr means that the expression should be evaluated and then 
 implicitely bound. !expr will evaluate expression, bind it to a fresh name x, and then replace 
 !expr with x. A method to escape verbose do notation. -}
 
@@ -185,7 +185,7 @@ game  = do {putStrLn (show !get);
                             (S k) => game)}
 
 runGame : { [RPSGAME NotRunning, RND, SYSTEM, STDIO] } Eff ()
-runGame = do { newgame [Rock,Paper,Scissors, Scissors, Paper]
+runGame = do { newgame [Rock, Paper, Scissors, Scissors, Paper]
              game
              putStrLn (show !get)}
 
