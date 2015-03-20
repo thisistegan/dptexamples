@@ -2,8 +2,8 @@ import Effects
 import Effect.State
 import Effect.StdIO
 
---To be used as an example for discussion only. Note that this will not type check. 
-From http://eb.host.cs.st-andrews.ac.uk/drafts/eff-tutorial.pdf --
+{- To be used as an example for discussion only. Note that this will not type check. 
+From http://eb.host.cs.st-andrews.ac.uk/drafts/eff-tutorial.pdf -}
 
 
 readIntBroke : { [STATE (Vect n Int), STDIO] } Eff ()
