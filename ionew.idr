@@ -2,8 +2,8 @@ module ionew
 
 import Prelude.List
 
-{- Only point of this is to demonstrate case where type can only be known after evaluation. 
-What happens in Idris in this case? Can ignore until next comment is reached. Based on Edwin
+{- Used in order to demonstrate the case where type can only be known after evaluation. 
+How does Idris handle this case? Need not read the code until the next comment is found. Based on Edwin
 Brady's old code. -}
 
 data Lock = Locked | Unlocked
@@ -98,19 +98,19 @@ kbind : (IONew a) -> (a -> b) -> (IONew b)
 kbind (IOReturn a) k = IOReturn (k a)
 kbind (IODo c p) k = IODo c (\x => (kbind (p x) k))
 
-{-Consider the definition of fork. We have IDo (c:command) l. We need l:Response c -> (IONew a
--}
+{-Consider the definition of fork. We have IDo (c:command) l. We need l to be of type 
+l:Response c -> (IONew a) -}
 
 {-Based on pattern matching, Idris will find that l = Response(Fork proc) -> IONew(a). Great,
-so all we need know is Response(Fork proc) = (), which we clearly know from the definition of
+so all we need now is Response(Fork proc) = (), which we clearly know from the definition of
 Response given above-}
 
 {-The compiler does not know this though. If we run this without the EqualityFork proposition
 and its proof, the compiler will be unable to unify Response (Fork proc) with (). You can edit
 the code to try this yourself. -}
 
-{-Thus, we have to manually prove Response(Fork proc) = (), which is fairly trivial but needed
--}
+{-Thus, we have to manually prove Response(Fork proc) = (), which is fairly trivial but needed. The proofs 
+are at the bottom of the program and were added using Idris' interactive theorem proof mode. -}
 
 EqualityFork: (proc:IO())->Response (Fork proc) = ()
 EqualityFork proc = ?EqualF
